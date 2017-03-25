@@ -21,6 +21,21 @@ class ThumbsMaker
     private $_srcImg;
     private $_distImg;
 
+    public function initAndRun()
+    {
+        $uri = $_SERVER['REQUEST_URI'];
+        $currentDir = dirname($_SERVER['SCRIPT_NAME']);
+        $uri = ltrim($uri, $currentDir);
+
+        preg_match('/(\d+)\/(\d+)\/(.*)?/', $uri, $matches);
+
+        if (count($matches) == 4) {
+            $this->run($matches[1], $matches[2], $matches[3]);
+        }
+
+        throw new \Intervention\Image\Exception\InvalidArgumentException();
+    }
+
 
     public function run($w, $h, $img)
     {
@@ -67,7 +82,7 @@ class ThumbsMaker
 
             // src file not exists anymore
             if (!is_file($this->_srcImg)) {
-                throw new NotFoundException();
+                throw new \Intervention\Image\Exception\NotFoundException();
             }
         }
         return $this->_srcImg;
