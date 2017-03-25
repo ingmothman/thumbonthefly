@@ -3,7 +3,6 @@
 
 
 namespace osmancode\thumbonthefly;
-require(__DIR__ . "/../../autoload.php");
 
 
 use Intervention\Image\Exception\InvalidArgumentException;
