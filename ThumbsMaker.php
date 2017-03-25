@@ -1,8 +1,12 @@
 <?php
 
-namespace osmancode\thumbonthefly;
 
-use Intervention\Image\Exception\NotFoundException;
+
+namespace osmancode\thumbonthefly;
+require(__DIR__ . "/../../autoload.php");
+
+
+use Intervention\Image\Exception\InvalidArgumentException;
 use Intervention\Image\ImageManager;
 
 class ThumbsMaker
@@ -33,7 +37,7 @@ class ThumbsMaker
             $this->run($matches[1], $matches[2], $matches[3]);
         }
 
-        throw new \Intervention\Image\Exception\InvalidArgumentException();
+        throw new InvalidArgumentException();
     }
 
 
@@ -82,7 +86,7 @@ class ThumbsMaker
 
             // src file not exists anymore
             if (!is_file($this->_srcImg)) {
-                throw new \Intervention\Image\Exception\NotFoundException();
+                throw new \Intervention\Image\Exception\NotFoundException;
             }
         }
         return $this->_srcImg;

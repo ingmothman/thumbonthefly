@@ -14,7 +14,8 @@
   "authors": [
     {
       "name": "Mohamad Othman",
-      "email": "osmancode@gmail.com"
+      "email": "osmancode@gmail.com",
+      "homepage": "http://osmancode.me/"
     }
   ],
   "require": {
