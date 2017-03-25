@@ -2,7 +2,7 @@
 
 
 
-namespace osmancode\thumbonthefly;
+namespace Osmancode\Thumbonthefly;
 
 
 use Intervention\Image\Exception\InvalidArgumentException;

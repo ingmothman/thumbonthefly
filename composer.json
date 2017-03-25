@@ -23,7 +23,7 @@
   },
   "autoload": {
     "psr-4": {
-      "osmancode\thumbonthefly\\": "src"
+      "Osmancode\Thumbonthefly\\": "src"
     }
   }
 }
