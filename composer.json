@@ -1,0 +1,28 @@
+{
+  "name": "osmancode/thumbonthefly",
+  "description": "Simple PHP library to generate image thumbnails on the fly.",
+  "type": "yii2-extension",
+  "keywords": [
+    "image",
+    "resize",
+    "imagick",
+    "gd",
+    "php",
+    "yii2"
+  ],
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Mohamad Othman",
+      "email": "osmancode@gmail.com"
+    }
+  ],
+  "require": {
+    "yiisoft/yii2": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "osmancode\\thumbonthefly\\": ""
+    }
+  }
+}
