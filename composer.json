@@ -1,7 +1,7 @@
 {
   "name": "osmancode/thumbonthefly",
   "description": "Simple PHP library to generate image thumbnails on the fly.",
-  "type": "yii2-extension",
+  "type": "library",
   "keywords": [
     "image",
     "resize",
