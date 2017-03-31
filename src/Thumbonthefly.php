@@ -15,8 +15,13 @@ class Thumbonthefly
     private $_img;
     private $_srcImg;
     private $_distImg;
+    protected $_config = array(
+        'maxWidth',
+        'maxHeight',
+        'sizesWhiteList'
+    );
 
-    public static function init($uploadsDir)
+    public static function init($uploadsDir, array $config = array())
     {
         self::$uploadsDir = $uploadsDir;
 
@@ -27,14 +32,16 @@ class Thumbonthefly
         preg_match('/(\d+)\/(\d+)\/(.*)?/', $uri, $matches);
 
         if (count($matches) == 4) {
-            new self($matches[1], $matches[2], $matches[3]);
+            new self($matches[1], $matches[2], $matches[3], $config);
         }
 
         throw new InvalidArgumentException();
     }
 
-    private function __construct($w, $h, $img)
+    private function __construct($w, $h, $img, array $config)
     {
+        $this->mergeConfig($config);
+
         $this->_w = $w;
         $this->_h = $h;
         $this->_img = $img;
@@ -54,6 +61,15 @@ class Thumbonthefly
             return $this->renderImage($resource->basePath());
         } else {
             return $this->renderImage($srcImg);
+        }
+    }
+
+    private function mergeConfig(array $config)
+    {
+        foreach ($this->_config as $prop) {
+            if (isset($config[$prop])) {
+                $this->$prop = $config[$prop];
+            }
         }
     }
 
