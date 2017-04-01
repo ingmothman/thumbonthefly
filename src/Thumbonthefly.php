@@ -1,25 +1,32 @@
 <?php
 
 namespace Osmancode\Thumbonthefly;
+
 use Intervention\Image\Exception\InvalidArgumentException;
 use Intervention\Image\ImageManager;
 
 class Thumbonthefly
 {
+    /** @var  string Original Images Source */
     private static $uploadsDir;
+    /** @var string Thumbnails Cache Directory Name */
+    public $thumbnailCacheDirName = '.thumbnails';
+    /** @var array Array Containg a white list of allowed sizes. */
     public $sizesWhiteList = ['70x70'];
+    /** @var int Max allowed thumbnail width */
     public $maxWidth = 2000;
+    /** @var int Max allowed thumbnail height */
     public $maxHeight = 2000;
+    /** @var int Current thumbnail Width */
     private $_w;
+    /** @var int Current thumbnail Height */
     private $_h;
+    /** @var string Current image relative path */
     private $_img;
+    /** @var string Source Image absolute path */
     private $_srcImg;
+    /** @var string destination thumbnail absolute path */
     private $_distImg;
-    protected $_config = array(
-        'maxWidth',
-        'maxHeight',
-        'sizesWhiteList'
-    );
 
     public static function init($uploadsDir, array $config = array())
     {
@@ -37,6 +44,14 @@ class Thumbonthefly
 
         throw new InvalidArgumentException();
     }
+
+    /** @var array Config list that user can override */
+    protected $_config = array(
+        'maxWidth',
+        'maxHeight',
+        'thumbnailCacheDirName',
+        'sizesWhiteList'
+    );
 
     private function __construct($w, $h, $img, array $config)
     {
@@ -107,7 +122,7 @@ class Thumbonthefly
             $hash = hash('md4', implode('#', $hashComponents));
             $distFileName = "{$hash}." . pathinfo($srcImg, PATHINFO_EXTENSION);
 
-            $this->_distImg = self::$uploadsDir . "/.thumbnails/{$distFileName}";
+            $this->_distImg = self::$uploadsDir . "/{$this->thumbnailCacheDirName}/{$distFileName}";
         }
         return $this->_distImg;
     }
@@ -117,21 +132,21 @@ class Thumbonthefly
         $imgModificationTime = filemtime($img);
 
         $imgModificationTimeAsString = date('D, d M Y H:i:s ', $imgModificationTime) . 'GMT';
-        $etag = hash('md4', $imgModificationTime);
 
         $ifModifiedSince = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) : false;
-
         $ifNoneMatch = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] : false;
 
+        // Always send those headers
+        $oneMonthTime = (3600 * 24 * 30);
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s \G\M\T', $imgModificationTime));
+
         if (
-            (($ifNoneMatch && $ifNoneMatch == $etag) || (!$ifNoneMatch)) &&
-            ($ifModifiedSince !== false && $ifModifiedSince == $imgModificationTime)
+        ($ifModifiedSince !== false && $ifModifiedSince <= $imgModificationTime)
         ) {
             header('HTTP/1.1 304 Not Modified');
-            exit();
         } else {
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s \G\M\T', $imgModificationTime));
-            header("ETag: $etag");
+            header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', ($imgModificationTime + $oneMonthTime)));
+            header('Cache-Control:public, max-age=' . $oneMonthTime);
 
             $imgInfo = getimagesize($img);
 
@@ -139,7 +154,9 @@ class Thumbonthefly
             header("Content-type: {$imgInfo['mime']}");
             header('Content-Length: ' . filesize($img));
             readfile($img);
-            exit();
         }
+
+        exit();
+
     }
 }
